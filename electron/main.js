@@ -318,15 +318,49 @@ function forceUninstallSoftware(software) {
     let errors = [];
 
     try {
-      if (software.registryPath) {
-        try {
-          execSync(`reg delete "${software.registryPath}" /f 2>nul`, { stdio: 'ignore' });
-          cleanedCount++;
-        } catch (error) {
-          errors.push(`删除注册表失败：${error.message}`);
-        }
+      // 1. 结束进程树
+      try {
+        // 结束所有包含软件名称的进程
+        const processName = software.name.replace(/\.exe$/i, '');
+        execSync(`taskkill /F /IM "${processName}.exe" /T 2>nul`, { stdio: 'ignore' });
+        cleanedCount++;
+      } catch (error) {
+        errors.push(`结束进程失败：${error.message}`);
       }
-      
+
+      // 2. 删除相关服务
+      try {
+        const serviceNames = [software.name, `${software.name}X64`, 'QPCore', 'QQProtectX64'];
+        for (const serviceName of serviceNames) {
+          execSync(`sc delete "${serviceName}" 2>nul`, { stdio: 'ignore' });
+        }
+        cleanedCount++;
+      } catch (error) {
+        errors.push(`删除服务失败：${error.message}`);
+      }
+
+      // 3. 删除注册表项
+      try {
+        const regPaths = [
+          `HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\${software.name}`,
+          `HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\${software.name}X64`,
+          `HKEY_CURRENT_USER\\Software\\${software.name}`,
+          `HKEY_LOCAL_MACHINE\\SOFTWARE\\${software.name}`,
+          `HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\QPCore`,
+          `HKEY_LOCAL_MACHINE\\SYSTEM\\CurrentControlSet\\Services\\QQProtectX64`,
+          `HKEY_CURRENT_USER\\Software\\Tencent\\QQProtect`,
+          `HKEY_LOCAL_MACHINE\\SOFTWARE\\Tencent\\QQProtect`
+        ];
+        
+        for (const regPath of regPaths) {
+          execSync(`reg delete "${regPath}" /f 2>nul`, { stdio: 'ignore' });
+        }
+        cleanedCount++;
+      } catch (error) {
+        errors.push(`删除注册表失败：${error.message}`);
+      }
+
+      // 4. 删除文件和目录
       let installPaths = [];
       if (software.uninstallString) {
         const pathMatch = software.uninstallString.match(/"([^"]+)"/);
@@ -344,6 +378,9 @@ function forceUninstallSoftware(software) {
         path.join('C:\\Program Files (x86)', software.name),
         path.join(process.env.LOCALAPPDATA || '', software.name),
         path.join(process.env.APPDATA || '', software.name),
+        path.join('C:\\Program Files (x86)', 'Common Files', 'Tencent', 'QQProtect'),
+        path.join(process.env.APPDATA || '', 'Tencent', 'QQ', 'QQProtect'),
+        path.join(process.env.LOCALAPPDATA || '', 'Tencent', 'QQProtect')
       ];
       
       installPaths = [...new Set([...installPaths, ...commonPaths])];
@@ -357,6 +394,33 @@ function forceUninstallSoftware(software) {
             errors.push(`删除程序目录失败：${error.message}`);
           }
         }
+      }
+
+      // 5. 清理启动项
+      try {
+        const startupFolders = [
+          path.join(process.env.APPDATA || '', 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Startup'),
+          path.join('C:\\ProgramData', 'Microsoft', 'Windows', 'Start Menu', 'Programs', 'Startup')
+        ];
+        
+        for (const startupFolder of startupFolders) {
+          if (fs.existsSync(startupFolder)) {
+            const files = fs.readdirSync(startupFolder);
+            for (const file of files) {
+              if (file.includes(software.name) || file.includes('QQProtect') || file.includes('QPCore')) {
+                const filePath = path.join(startupFolder, file);
+                try {
+                  fs.unlinkSync(filePath);
+                  cleanedCount++;
+                } catch (error) {
+                  errors.push(`删除启动项失败：${error.message}`);
+                }
+              }
+            }
+          }
+        }
+      } catch (error) {
+        errors.push(`清理启动项失败：${error.message}`);
       }
 
       resolve({ 
