@@ -2,9 +2,9 @@ name: Build Windows Release
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, main ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, main ]
 
 jobs:
   build:
@@ -24,7 +24,7 @@ jobs:
     - name: Build renderer
       run: npm run build:renderer
 
-    - name: Build Electron app
+    - name: Build Electron app with maximum compression
       run: npm run build
 
     - name: Upload artifacts
@@ -32,3 +32,15 @@ jobs:
       with:
         name: windows-release
         path: dist-release/
+
+    - name: Create GitHub Release
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          dist-release/*.exe
+          dist-release/*.zip
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
