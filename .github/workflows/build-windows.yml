@@ -43,7 +43,7 @@ jobs:
       if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: v${{ fromJson(steps.get-version.outputs.version) }}
+        tag_name: v${{ steps.get-version.outputs.version }}
         files: |
           dist-release/*.exe
           dist-release/*.zip
