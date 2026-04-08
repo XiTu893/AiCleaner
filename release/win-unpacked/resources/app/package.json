@@ -1,0 +1,64 @@
+{
+  "name": "aicleaner",
+  "version": "1.0.0",
+  "description": "智清大师 - 系统优化和硬件检测工具",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "concurrently \"bun run dev:renderer\" \"wait-on http://localhost:5173 && bun run dev:electron\"",
+    "dev:renderer": "vite",
+    "dev:electron": "cross-env NODE_ENV=development electron .",
+    "build": "vite build && electron-builder",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "echarts": "^6.0.0",
+    "iconv-lite": "^0.6.3",
+    "lucide-react": "^0.294.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "recharts": "^2.10.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@vitejs/plugin-react": "^4.2.1",
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1",
+    "to-ico": "^1.1.5",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.8",
+    "wait-on": "^7.2.0"
+  },
+  "build": {
+    "appId": "com.aicleaner.app",
+    "productName": "智清大师",
+    "directories": {
+      "output": "dist-release"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "public/**/*"
+    ],
+    "asar": false,
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "public/XiTu-logo.jpg",
+      "requestedExecutionLevel": "asInvoker",
+      "sign": null
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true
+    }
+  }
+}

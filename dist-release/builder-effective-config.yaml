@@ -1,0 +1,68 @@
+directories:
+  output: dist-release
+  buildResources: build
+appId: com.aicleaner.app
+productName: 智清大师
+files:
+  - filter:
+      - dist/**/*
+      - electron/**/*
+      - public/**/*
+      - '!**/*.md'
+      - '!**/*.txt'
+      - '!**/node_modules/**/test/**'
+      - '!**/node_modules/**/tests/**'
+      - '!**/node_modules/**/*.test.js'
+      - '!**/node_modules/**/*.spec.js'
+      - '!**/node_modules/**/LICENSE*'
+      - '!**/node_modules/**/license*'
+      - '!**/node_modules/**/Readme*'
+      - '!**/node_modules/**/readme*'
+      - '!**/node_modules/**/README*'
+      - '!**/node_modules/**/CHANGELOG*'
+      - '!**/node_modules/**/changelog*'
+      - '!**/node_modules/**/*.d.ts'
+      - '!**/node_modules/**/*.map'
+      - '!**/node_modules/**/*.tsbuildinfo'
+      - '!**/node_modules/**/example*'
+      - '!**/node_modules/**/demo*'
+      - '!**/node_modules/**/benchmark*'
+      - '!**/node_modules/**/docs/**'
+asar: true
+asarUnpack: []
+compression: maximum
+removePackageScripts: true
+removePackageKeywords: true
+afterPack: ./electron/afterPack.js
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: portable
+      arch:
+        - x64
+    - target: zip
+      arch:
+        - x64
+  requestedExecutionLevel: asInvoker
+  legalTrademarks: https://github.com/XiTu893 溪土红薯所有
+  publish: null
+  sign: null
+  signAndEditExecutable: false
+  verifyUpdateCodeSignature: false
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  deleteAppDataOnUninstall: false
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: 智清大师
+portable:
+  artifactName: 智清大师-v${version}-portable.exe
+extraMetadata:
+  author: 溪土红薯 <28491599@qq.com>
+  homepage: https://github.com/XiTu893
+  description: 智清大师 - 系统优化和硬件检测工具
+  copyright: https://github.com/XiTu893 溪土红薯所有
+electronVersion: 28.3.3

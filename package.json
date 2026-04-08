@@ -1,0 +1,116 @@
+{
+  "name": "aicleaner",
+  "version": "1.0.2",
+  "description": "智清大师 - 系统优化和硬件检测工具",
+  "author": "溪土工作室 <28491599@qq.com>",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "concurrently \"bun run dev:renderer\" \"wait-on http://localhost:5173 && bun run dev:electron\"",
+    "dev:renderer": "vite",
+    "dev:electron": "cross-env NODE_ENV=development electron .",
+    "build": "vite build && electron-builder",
+    "build:fast": "vite build && electron-builder --win --x64 --dir",
+    "build:renderer": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "echarts": "^6.0.0",
+    "iconv-lite": "^0.6.3",
+    "lucide-react": "^0.294.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "recharts": "^2.10.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@vitejs/plugin-react": "^4.2.1",
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1",
+    "terser": "^5.46.1",
+    "to-ico": "^1.1.5",
+    "typescript": "^5.3.3",
+    "vite": "^5.0.8",
+    "wait-on": "^7.2.0"
+  },
+  "build": {
+    "appId": "com.aicleaner.app",
+    "productName": "智清大师",
+    "directories": {
+      "output": "dist-release",
+      "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "public/**/*",
+      "!**/*.md",
+      "!**/*.txt",
+      "!**/node_modules/**/test/**",
+      "!**/node_modules/**/tests/**",
+      "!**/node_modules/**/*.test.js",
+      "!**/node_modules/**/*.spec.js",
+      "!**/node_modules/**/LICENSE*",
+      "!**/node_modules/**/license*",
+      "!**/node_modules/**/Readme*",
+      "!**/node_modules/**/readme*",
+      "!**/node_modules/**/README*",
+      "!**/node_modules/**/CHANGELOG*",
+      "!**/node_modules/**/changelog*",
+      "!**/node_modules/**/*.d.ts",
+      "!**/node_modules/**/*.map",
+      "!**/node_modules/**/*.tsbuildinfo",
+      "!**/node_modules/**/example*",
+      "!**/node_modules/**/demo*",
+      "!**/node_modules/**/benchmark*",
+      "!**/node_modules/**/docs/**"
+    ],
+    "asar": true,
+    "asarUnpack": [],
+    "compression": "maximum",
+    "removePackageScripts": true,
+    "removePackageKeywords": true,
+    "afterPack": "./electron/afterPack.js",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        },
+        {
+          "target": "zip",
+          "arch": ["x64"]
+        }
+      ],
+      "requestedExecutionLevel": "asInvoker",
+      "legalTrademarks": "https://github.com/XiTu893 溪土红薯所有",
+      "publish": null,
+      "sign": null,
+      "signAndEditExecutable": false,
+      "verifyUpdateCodeSignature": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "智清大师"
+    },
+    "portable": {
+      "artifactName": "智清大师-v${version}-portable.exe"
+    },
+    "extraMetadata": {
+      "author": "溪土红薯 <28491599@qq.com>",
+      "homepage": "https://github.com/XiTu893",
+      "description": "智清大师 - 系统优化和硬件检测工具",
+      "copyright": "https://github.com/XiTu893 溪土红薯所有"
+    }
+  }
+}
