@@ -27,6 +27,12 @@ jobs:
     - name: Build Electron app with maximum compression
       run: npm run build
 
+    - name: Get version from package.json
+      id: get-version
+      run: |
+        $version = (Get-Content package.json | ConvertFrom-Json).version
+        echo "::set-output name=version::$version"
+
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
@@ -37,6 +43,7 @@ jobs:
       if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
       uses: softprops/action-gh-release@v1
       with:
+        tag_name: v${{ fromJson(steps.get-version.outputs.version) }}
         files: |
           dist-release/*.exe
           dist-release/*.zip
