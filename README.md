@@ -8,11 +8,11 @@
 
 ### 从 GitHub Releases 下载
 
-访问 [GitHub Releases 页面](https://github.com/XiTu893/AICLeaner/releases) 下载最新版本：
+访问 [GitHub Releases 页面](https://github.com/XiTu893/AICleaner/releases) 下载最新版本：
 
-- **Windows (x64)**: 下载 `智清大师-vx.x.x.zip`通过网盘分享的文件：AICleaner-1.0.1.zip
-  链接: <https://pan.baidu.com/s/1R3lO8RpMbJ1r1VstTsoPuw?pwd=1234> 提取码: 1234
-- 解压后运行 `智清大师.exe` 即可使用
+- **Windows (x64)**: 下载 `智清大师 Setup x.x.x.exe` 安装包或 `智清大师-vx.x.x-portable.exe` 便携版
+- 安装包：双击运行安装程序
+- 便携版：解压后运行 `智清大师.exe` 即可使用
 
 ### 百度网盘下载
 
