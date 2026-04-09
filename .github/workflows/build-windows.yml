@@ -34,7 +34,9 @@ jobs:
       id: get-version
       run: |
         $version = (Get-Content package.json | ConvertFrom-Json).version
+        $timestamp = Get-Date -Format "yyyyMMddHHmmss"
         echo "::set-output name=version::$version"
+        echo "::set-output name=timestamp::$timestamp"
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
@@ -42,19 +44,11 @@ jobs:
         name: windows-release
         path: dist-release/
 
-    - name: Delete existing release
-      if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
-      continue-on-error: true
-      run: |
-        gh release delete v${{ steps.get-version.outputs.version }} --yes || true
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
     - name: Create GitHub Release
       if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: v${{ steps.get-version.outputs.version }}
+        tag_name: v${{ steps.get-version.outputs.version }}-${{ steps.get-version.outputs.timestamp }}
         files: |
           dist-release/*.exe
           dist-release/*.zip
