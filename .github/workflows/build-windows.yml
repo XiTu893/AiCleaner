@@ -42,6 +42,14 @@ jobs:
         name: windows-release
         path: dist-release/
 
+    - name: Delete existing release
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
+      continue-on-error: true
+      run: |
+        gh release delete v${{ steps.get-version.outputs.version }} --yes || true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Create GitHub Release
       if: github.event_name == 'push' && (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main')
       uses: softprops/action-gh-release@v1
@@ -52,5 +60,6 @@ jobs:
           dist-release/*.zip
         draft: false
         prerelease: false
+        fail_on_unmatched_files: false
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
